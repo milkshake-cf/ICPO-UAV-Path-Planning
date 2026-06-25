@@ -72,12 +72,47 @@ only 150 particles compared to SPSO's 500.
 
 \subsection{Swarm Intelligence for Path Planning}
 % PSO, GWO, WOA, ACO for path planning
-% SPSO (Phung \& Ha, 2021) - spherical vector encoding
+Swarm intelligence (SI) algorithms have been widely applied to UAV path planning 
+due to their ability to handle nonlinear, non-convex optimization problems 
+\cite{karaboga2012}.
+
+Particle Swarm Optimization (PSO) \cite{kennedy1995} and its variants are 
+among the most popular. The Spherical Vector-based PSO (SPSO) \cite{spsp} 
+encodes paths using spherical coordinates $(r, \psi, \phi)$, transforming 
+the constrained path planning into an unconstrained optimization in 
+spherical space. NMOPSO \cite{nmopso} extended this with multi-objective 
+optimization incorporating kinematic constraints.
+
+Grey Wolf Optimizer (GWO) \cite{mirjalili2014} has also been applied, 
+with IGWO \cite{igwo} recently proposing cooperative predation strategies 
+and lens opposition-based learning for UAV path planning. Whale Optimization 
+Algorithm (WOA) \cite{mirjalili2016} has seen improvements like CICDWOA 
+\cite{cicdwoa} with Cauchy-based strategies for 3D path planning.
+
+Ant Colony Optimization (ACO) \cite{dorigo2006} has been used for multi-UAV 
+cooperative inspection \cite{aco3d}. However, most existing works focus on 
+well-established algorithms; newly proposed metaheuristics remain largely 
+untested on constrained path planning problems.
 
 \subsection{Crested Porcupine Optimizer}
-% CPO (Abdel-Basset et al., 2024) - four defense strategies
-% Original application: CEC benchmark functions
-% Gap: no application to constrained real-world problems
+CPO \cite{cpo} is a recently proposed (2024) nature-inspired metaheuristic 
+that simulates four defense strategies of crested porcupines: visual 
+deterrence, sound deterrence, physical attack, and lethal attack. CPO 
+has demonstrated competitive performance on CEC benchmark functions 
+against state-of-the-art algorithms including PSO, GWO, and WOA. 
+However, its application to constrained engineering problems such as 
+UAV path planning has not been investigated, which motivates this work.
+
+\subsection{Research Gap and Contributions}
+While SI algorithms have been extensively studied for path planning, 
+most work focuses on established algorithms (PSO, GWO, WOA, ACO). 
+Newly proposed algorithms like CPO remain unexplored in this domain. 
+Furthermore, when directly applied, many SI algorithms struggle due to 
+the highly constrained nature of 3D path planning. This paper bridges 
+this gap by: (1) providing the first systematic evaluation of CPO on 
+constrained UAV path planning, (2) identifying key limitations of CPO 
+in this setting, and (3) proposing targeted improvements (ICPO) that 
+significantly enhance performance.
 
 %===========================================================================
 \section{Problem Formulation}
@@ -221,13 +256,48 @@ M. Abdel-Basset, R. Mohamed, et al.,
 ``Crested Porcupine Optimizer: A new nature-inspired metaheuristic,''
 \textit{Knowledge-Based Systems}, 2024.
 
+\bibitem{aco3d}
+D. N. Bui, T. N. Duong, and M. D. Phung,
+``Ant Colony Optimization for Cooperative Inspection Path Planning 
+Using Multiple Unmanned Aerial Vehicles,''
+\textit{IEEE/SICE SII}, 2024.
+
 \bibitem{nmopso}
 T. T. N. Duong, D.-N. Bui, and M. D. Phung,
 ``Navigation variable-based multi-objective particle swarm optimization 
 for UAV path planning with kinematic constraints,''
 \textit{Neural Computing and Applications}, 2025.
 
-\bibitem{aco3d}
+\bibitem{kennedy1995}
+J. Kennedy and R. Eberhart,
+``Particle Swarm Optimization,''
+\textit{Proc. ICNN}, 1995.
+
+\bibitem{mirjalili2014}
+S. Mirjalili, S. M. Mirjalili, and A. Lewis,
+``Grey Wolf Optimizer,''
+\textit{Advances in Engineering Software}, vol. 69, pp. 46--61, 2014.
+
+\bibitem{mirjalili2016}
+S. Mirjalili and A. Lewis,
+``The Whale Optimization Algorithm,''
+\textit{Advances in Engineering Software}, vol. 95, pp. 51--67, 2016.
+
+\bibitem{dorigo2006}
+M. Dorigo, M. Birattari, and T. Stutzle,
+``Ant Colony Optimization,''
+\textit{IEEE Computational Intelligence Magazine}, vol. 1, no. 4, pp. 28--39, 2006.
+
+\bibitem{karaboga2012}
+D. Karaboga et al.,
+``A comprehensive survey: artificial bee colony (ABC) algorithm and applications,''
+\textit{Artificial Intelligence Review}, 2012.
+
+\bibitem{cicdwoa}
+J. Wei et al.,
+``CICDWOA: A Collective Cognitive Sharing Whale Optimization Algorithm 
+with Cauchy Inverse Cumulative Distribution for 2D/3D Path Planning,''
+arXiv:2603.20501, 2026.
 D. N. Bui, T. N. Duong, and M. D. Phung,
 ``Ant Colony Optimization for Cooperative Inspection Path Planning 
 Using Multiple Unmanned Aerial Vehicles,''

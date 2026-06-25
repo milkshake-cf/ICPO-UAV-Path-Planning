@@ -6,7 +6,7 @@
 clc; clear; close all;
 
 %% Settings
-N_RUNS = 5;        % Number of independent runs per algorithm (test run)
+N_RUNS = 20;       % Number of independent runs per algorithm
 MaxIt = 200;        % Iterations (consistent comparison)
 
 % Results storage
