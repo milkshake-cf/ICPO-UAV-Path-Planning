@@ -161,8 +161,8 @@ for a = 1:2
     fc = results.(alg).finalCosts;
     fprintf('%-10s %12.2f %12.2f %12.2f %12.2f %12.1f\n', alg, min(fc), max(fc), mean(fc), std(fc), mean(results.(alg).times));
 end
-save('batch_gwo_woa_results.mat', 'results', 'N_RUNS', 'MaxIt');
-disp('Results saved to batch_gwo_woa_results.mat');
+save('results/batch_gwo_woa_results.mat', 'results', 'N_RUNS', 'MaxIt');
+disp('Results saved to results/batch_gwo_woa_results.mat');
 
 %% GWO helper
 function [X1,X2,X3]=GWO_update(A_Pos,B_Pos,D_Pos,X,a,VarSize)

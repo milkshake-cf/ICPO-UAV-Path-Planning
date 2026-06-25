@@ -322,7 +322,7 @@ legend('SPSO', 'CPO', 'ICPO', 'Location', 'northeast');
 xlabel('Iteration'); ylabel('Mean Best Cost');
 title(sprintf('Convergence Comparison (%d runs)', N_RUNS));
 grid on; hold off;
-saveas(gcf, 'convergence_comparison.png');
+saveas(gcf, 'figures/convergence_comparison.png');
 
 %% Boxplot
 figure(2); clf;
@@ -330,10 +330,10 @@ boxplot([results.SPSO.finalCosts; results.CPO.finalCosts; results.ICPO.finalCost
 ylabel('Final Best Cost');
 title(sprintf('Distribution of Final Costs (%d runs)', N_RUNS));
 grid on;
-saveas(gcf, 'boxplot_comparison.png');
+saveas(gcf, 'figures/boxplot_comparison.png');
 
 %% Save results
-save('batch_comparison_results.mat', 'results', 'stat_table', 'algs', 'N_RUNS', 'MaxIt');
-fprintf('\nResults saved to batch_comparison_results.mat\n');
-fprintf('Convergence plot saved to convergence_comparison.png\n');
-fprintf('Boxplot saved to boxplot_comparison.png\n');
+save('results/batch_comparison_results.mat', 'results', 'stat_table', 'algs', 'N_RUNS', 'MaxIt');
+fprintf('\nResults saved to results/batch_comparison_results.mat\n');
+fprintf('Convergence plot saved to figures/convergence_comparison.png\n');
+fprintf('Boxplot saved to figures/boxplot_comparison.png\n');

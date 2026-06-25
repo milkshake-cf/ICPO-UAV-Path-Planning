@@ -281,5 +281,5 @@ title('CPO Convergence Curve');
 grid on;
 
 % Save results
-save('CPO_results_v2.mat', 'BestCost', 'GlobalBest', 'BestPosition');
-disp('Results saved to CPO_results_v2.mat');
+save('results/CPO_results_v2.mat', 'BestCost', 'GlobalBest', 'BestPosition');
+disp('Results saved to results/CPO_results_v2.mat');

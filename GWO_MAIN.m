@@ -145,8 +145,8 @@ plot(BestCost, 'LineWidth', 2, 'Color', [0.4 0.4 0.4]);
 xlabel('Iteration'); ylabel('Best Cost');
 title('GWO Convergence Curve'); grid on;
 
-save('GWO_results.mat', 'BestCost', 'Alpha', 'BestPosition');
-disp('Results saved to GWO_results.mat');
+save('results/GWO_results.mat', 'BestCost', 'Alpha', 'BestPosition');
+disp('Results saved to results/GWO_results.mat');
 
 %% Helper function: GWO position update
 function [X1, X2, X3] = GWO_update(X, A_Pos, B_Pos, D_Pos, a, VarSize)

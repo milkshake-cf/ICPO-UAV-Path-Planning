@@ -174,5 +174,5 @@ plot(BestCost, 'LineWidth', 2, 'Color', [0.2 0.6 0.6]);
 xlabel('Iteration'); ylabel('Best Cost');
 title('WOA Convergence Curve'); grid on;
 
-save('WOA_results.mat', 'BestCost', 'GlobalBest', 'BestPosition');
-disp('Results saved to WOA_results.mat');
+save('results/WOA_results.mat', 'BestCost', 'GlobalBest', 'BestPosition');
+disp('Results saved to results/WOA_results.mat');
