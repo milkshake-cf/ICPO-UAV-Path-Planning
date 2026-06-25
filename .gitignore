@@ -1,0 +1,27 @@
+# MATLAB
+*.asv
+*.m~
+*.mat~ 
+*.fig~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp / debug
+debug_init.m
+
+# Buggy old version (use CPO_MAIN_v2.m)
+CPO_MAIN.m
+
+# Original CPO source (separate, not our work)
+CPO_original/
+CPO.zip
+
+# MATLAB toolbox cache
+*.mexw64
+*.mexw32
+*.cpp
+
+# Obsidian
+.obsidian/

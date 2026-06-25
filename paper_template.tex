@@ -1,0 +1,244 @@
+%==========================================================================%
+%  Paper: Crested Porcupine Optimizer for Safety-enhanced                  %
+%         3D Path Planning of Unmanned Aerial Vehicles                     %
+%  Target: Drones (MDPI) / IEEE Access / Applied Soft Computing            %
+%==========================================================================%
+
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{multirow}
+
+\title{Improved Crested Porcupine Optimizer for Safety-enhanced \\
+       3D Path Planning of Unmanned Aerial Vehicles}
+
+\author{Your Name$^{1,*}$}
+\date{}
+
+\begin{document}
+\maketitle
+
+%===========================================================================
+\begin{abstract}
+Unmanned Aerial Vehicle (UAV) path planning in complex 3D environments 
+remains a challenging optimization problem due to multiple constraints 
+including obstacle avoidance, altitude limits, and path smoothness. 
+While swarm intelligence algorithms have shown promise, newly proposed 
+algorithms often struggle when directly applied to constrained 
+path planning tasks. 
+
+This paper investigates the application of the Crested Porcupine 
+Optimizer (CPO), a recently proposed nature-inspired metaheuristic 
+(2024), to UAV path planning in 3D terrain environments. 
+We analyze CPO's limitations in this constrained setting and propose 
+an Improved CPO (ICPO) that incorporates:
+(1) a personal best memory mechanism to preserve search history, and
+(2) an adaptive exploration-exploitation balance strategy.
+
+Experimental results on benchmark terrain maps demonstrate that 
+ICPO achieves a 23.8\% improvement over original CPO, reducing the 
+mean path cost from 8362 to 6368, approaching the performance of the 
+established Spherical Vector-based PSO (SPSO, mean 4807) while using 
+only 150 particles compared to SPSO's 500.
+\end{abstract}
+
+%===========================================================================
+\section{Introduction}
+
+\subsection{Background}
+% UAV applications, importance of path planning
+% Challenges: 3D environments, multiple constraints, real-time requirements
+
+\subsection{Motivation}
+% Swarm intelligence → good for nonlinear optimization
+% CPO (2024) → excellent on CEC benchmarks but untested on constrained path planning
+% Research gap: how do new SI algorithms perform on UAV path planning?
+
+\subsection{Contributions}
+\begin{enumerate}
+    \item First application of CPO to constrained 3D UAV path planning
+    \item Analysis of CPO's limitations in constrained optimization
+    \item Proposed ICPO with personal best memory and adaptive exploration
+    \item Comprehensive experimental validation against SPSO and CPO
+\end{enumerate}
+
+%===========================================================================
+\section{Related Work}
+
+\subsection{Swarm Intelligence for Path Planning}
+% PSO, GWO, WOA, ACO for path planning
+% SPSO (Phung \& Ha, 2021) - spherical vector encoding
+
+\subsection{Crested Porcupine Optimizer}
+% CPO (Abdel-Basset et al., 2024) - four defense strategies
+% Original application: CEC benchmark functions
+% Gap: no application to constrained real-world problems
+
+%===========================================================================
+\section{Problem Formulation}
+
+\subsection{UAV Kinematic Model and Path Representation}
+% Spherical vector encoding from SPSO framework
+% Each path node: (r_i, \psi_i, \phi_i) → (x_i, y_i, z_i)
+
+\subsection{Cost Function}
+\begin{equation}
+    J = b_1 J_{\text{length}} + b_2 J_{\text{threat}} + b_3 J_{\text{altitude}} + b_4 J_{\text{smooth}}
+\end{equation}
+
+Where:
+\begin{itemize}
+    \item $J_{\text{length}}$: Total path length (sum of Euclidean distances)
+    \item $J_{\text{threat}}$: Collision penalty with cylindrical obstacles
+    \item $J_{\text{altitude}}$: Altitude constraint penalty
+    \item $J_{\text{smooth}}$: Turning and climbing angle penalty
+    \item $b_1=5, b_2=1, b_3=10, b_4=1$: Weight coefficients
+\end{itemize}
+
+%===========================================================================
+\section{Proposed Method: Improved CPO (ICPO)}
+
+\subsection{Original CPO Algorithm}
+% Four defense mechanisms:
+% 1. Visual deterrence (exploration)
+% 2. Sound deterrence (exploration)  
+% 3. Physical attack (exploitation)
+% 4. Lethal attack (exploitation)
+
+\subsection{Limitations of CPO in Constrained Path Planning}
+\begin{enumerate}
+    \item \textbf{No personal best memory}: Unlike PSO which tracks pBest for 
+          each particle, CPO only stores the previous position. This causes 
+          loss of good solutions when the greedy selection rejects a newly 
+          generated but worse position.
+    \item \textbf{Purely random strategy selection}: CPO uses $rand() < rand()$ 
+          for exploration/exploitation switching, providing no adaptive control 
+          over the search behavior across iterations.
+    \item \textbf{Fitness-weighting instability}: The fitness-weighted step 
+          $S_t = \exp(f_i / \sum f_j)$ can produce extreme values when the 
+          cost distribution is skewed by infeasible solutions.
+\end{enumerate}
+
+\subsection{ICPO Improvements}
+
+\subsubsection{Personal Best Memory}
+Each agent $i$ maintains a personal best position $\mathbf{pBest}_i$:
+\begin{equation}
+    \mathbf{pBest}_i = \arg\min_{\tau \leq t} J(\mathbf{X}_i^\tau)
+\end{equation}
+
+In all four defense strategies, random reference agents use their pBest 
+positions instead of current positions for guided search.
+
+\subsubsection{Adaptive Exploration-Exploitation}
+Instead of random switching, ICPO uses an adaptive exploration ratio:
+\begin{equation}
+    \rho(t) = 0.7 \times (1 - t/T_{\max})^{0.5} + 0.3
+\end{equation}
+
+Early iterations favor exploration ($\rho \approx 1.0$), 
+gradually shifting to exploitation ($\rho \rightarrow 0.3$).
+
+%===========================================================================
+\section{Experiments}
+
+\subsection{Experimental Setup}
+\begin{itemize}
+    \item \textbf{Terrain}: Christmas Terrain digital elevation model ($800\times800$)
+    \item \textbf{Obstacles}: 6 cylindrical threats (radius 70--80 m)
+    \item \textbf{Start/End}: (200,100,150) → (800,800,150)
+    \item \textbf{Path nodes}: $n=10$ (30 decision variables: $r, \psi, \phi$)
+    \item \textbf{Algorithms}: SPSO, CPO, ICPO
+    \item \textbf{Runs}: 20 independent runs per algorithm
+    \item \textbf{Iterations}: 200 generations
+    \item \textbf{Hardware}: [YOUR SPECS]
+\end{itemize}
+
+\subsection{Results and Analysis}
+
+\begin{table}[h]
+\centering
+\caption{Comparison of path planning performance (20 runs)}
+\label{tab:results}
+\begin{tabular}{lcccccc}
+\toprule
+Algorithm & nPop & Best & Worst & Mean & Std & Avg Time (s) \\
+\midrule
+SPSO   & 500 & 4689 & 5173 & 4807 & 207 & 17.4 \\
+CPO    & 150 & 7049 & 8989 & 8362 & 800 & 4.3  \\
+ICPO   & 150 & 6253 & 6467 & 6368 & 86  & 4.7  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{convergence_comparison.png}
+\caption{Mean convergence curves over 20 independent runs}
+\label{fig:convergence}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{boxplot_comparison.png}
+\caption{Distribution of final path costs (boxplot)}
+\label{fig:boxplot}
+\end{figure}
+
+\subsection{Discussion}
+% Why ICPO > CPO: pBest preserves good solutions, adaptive balance
+% Why SPSO still leads: 500 particles, velocity-based update, mature algorithm
+% ICPO is competitive with fewer particles (150 vs 500)
+% Trade-off: computation time vs solution quality
+
+%===========================================================================
+\section{Conclusion}
+This paper investigated the application of the Crested Porcupine Optimizer 
+to 3D UAV path planning and identified key limitations when directly applying 
+unconstrained optimizers to constrained problems. 
+The proposed ICPO, with personal best memory and adaptive exploration, 
+demonstrated significant improvement over the original CPO.
+
+Future work includes multi-UAV coordination, dynamic obstacle environments, 
+and integration with deep learning for environment perception.
+
+%===========================================================================
+\bibliographystyle{plain}
+\begin{thebibliography}{99}
+
+\bibitem{spsp}
+M. D. Phung and Q. P. Ha, 
+``Safety-enhanced UAV Path Planning with Spherical Vector-based Particle Swarm Optimization,''
+\textit{Applied Soft Computing}, vol. 107, pp. 107376, 2021.
+
+\bibitem{cpo}
+M. Abdel-Basset, R. Mohamed, et al.,
+``Crested Porcupine Optimizer: A new nature-inspired metaheuristic,''
+\textit{Knowledge-Based Systems}, 2024.
+
+\bibitem{nmopso}
+T. T. N. Duong, D.-N. Bui, and M. D. Phung,
+``Navigation variable-based multi-objective particle swarm optimization 
+for UAV path planning with kinematic constraints,''
+\textit{Neural Computing and Applications}, 2025.
+
+\bibitem{aco3d}
+D. N. Bui, T. N. Duong, and M. D. Phung,
+``Ant Colony Optimization for Cooperative Inspection Path Planning 
+Using Multiple Unmanned Aerial Vehicles,''
+\textit{IEEE/SICE SII}, 2024.
+
+\bibitem{igwo}
+Z. Teng et al.,
+``An Improved Grey Wolf Optimizer Inspired by Advanced Cooperative Predation 
+for UAV Shortest Path Planning,''
+arXiv:2506.03663, 2025.
+
+\end{thebibliography}
+
+\end{document}
