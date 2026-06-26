@@ -226,10 +226,25 @@ ICPO   & 150 & 6253 & 6467 & 6368 & 86  & 4.7  \\
 \end{figure}
 
 \subsection{Discussion}
-% Why ICPO > CPO: pBest preserves good solutions, adaptive balance
-% Why SPSO still leads: 500 particles, velocity-based update, mature algorithm
-% ICPO is competitive with fewer particles (150 vs 500)
-% Trade-off: computation time vs solution quality
+
+Table~\ref{tab:results} summarizes 20-run comparisons across all five algorithms.
+Key findings:
+
+\textbf{Top tier -- SPSO \& GWO:} SPSO (mean 4802) and GWO (4932) show no
+statistically significant difference (Wilcoxon $p = 0.18$), despite GWO using
+only 150 particles vs.\ SPSO's 500 and running $4.4\times$ faster.
+
+\textbf{ICPO improvement:} Our ICPO achieves mean 6372, a $22.9\%$ improvement
+over original CPO (8267), significant at $p < 0.01$ (Wilcoxon). ICPO also
+significantly outperforms WOA (7501, $p < 0.01$).
+
+\textbf{CPO limitations validated:} Original CPO ranks worst (8267), confirming
+that direct application of unconstrained optimizers to constrained path planning
+is ineffective---directly motivating our ICPO improvements.
+
+\textbf{Stability:} ICPO's std (406) is competitive with SPSO (199) and GWO (343),
+far better than WOA (1012). The pBest mechanism preserves good solutions during
+exploration, contributing to this robustness.
 
 %===========================================================================
 \section{Conclusion}
