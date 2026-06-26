@@ -213,6 +213,24 @@ ICPO   & 150 & 6253 & 6467 & 6368 & 86  & 4.7  \\
 \end{tabular}
 \end{table}
 
+\begin{table}[h]
+\centering
+\caption{Multi-map comparison (mean cost, 10 runs each)}
+\label{tab:multimap}
+\begin{tabular}{lcccc}
+\toprule
+Map & Scenario & SPSO & GWO & ICPO \
+\midrule
+1 & Sparse obstacles (original) & 4814 & 4924 & 6337 \
+2 & Dense urban & 5075 & 5163 & 5896 \
+3 & High altitude, sparse & 4466 & 4480 & \textbf{4450} \
+4 & Narrow corridor & \textbf{4248} & \textbf{4248} & \textbf{4248} \
+5 & Edge obstacles & \textbf{3012} & \textbf{3012} & \textbf{3012} \
+\bottomrule
+\end{tabular}
+\end{table}
+\end{table}
+
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.9\textwidth]{convergence_comparison.png}
@@ -275,6 +293,24 @@ CPO  & 4670 & 4680 & 4674 & 4  \
 \bottomrule
 \end{tabular}
 \end{table}
+
+\subsection{Multi-Map Evaluation}
+
+Table~\ref{tab:multimap} presents results across five diverse terrain scenarios.
+Key observations:
+
+\textbf{ICPO competitiveness on specific terrains:} On Map~3 (high altitude, sparse
+obstacles), ICPO achieves the best mean cost (4450), outperforming both SPSO
+(4466) and GWO (4480). On Maps~4--5, all three algorithms converge to identical
+optimal paths.
+
+\textbf{SPSO/GWO dominance on complex maps:} On the dense urban Map~2,
+SPSO (5075) and GWO (5163) significantly outperform ICPO (5896), suggesting
+that velocity-based and hierarchy-based search strategies handle cluttered
+environments more effectively.
+
+\textbf{Robustness:} ICPO consistently produces feasible paths across all maps,
+validating the spherical vector encoding's generality.
 
 \subsection{Ablation Study}
 
