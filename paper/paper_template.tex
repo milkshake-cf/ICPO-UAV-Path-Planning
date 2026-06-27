@@ -404,16 +404,35 @@ pBest primarily enhances stability. Both work synergistically: their
 combined improvement (22.9\% over CPO) exceeds the sum of individual gains.
 
 \section{Conclusion}
-This paper investigated the application of the Crested Porcupine Optimizer 
-to 3D UAV path planning and identified key limitations when directly applying 
-unconstrained optimizers to constrained problems. 
-The proposed ICPO, with personal best memory and adaptive exploration, 
-demonstrated significant improvement over the original CPO.
 
-Future work includes multi-UAV coordination, dynamic obstacle environments, 
-and integration with deep learning for environment perception.
+This paper presented the first systematic investigation of the Crested
+Porcupine Optimizer (CPO) for constrained 3D UAV path planning. Our key
+findings are:
 
-%===========================================================================
+\begin{enumerate}
+    \item \textbf{CPO degrades on constrained problems:} Direct application
+          yields mean cost 8267, significantly worse than SPSO (4802) and
+          GWO (4932). The absence of personal best memory and purely random
+          strategy selection are the root causes.
+    \item \textbf{ICPO recovers most performance:} With pBest memory and
+          adaptive exploration, ICPO achieves mean 6372 -- a 22.9\%
+          improvement over CPO, validated by Wilcoxon test ($p<0.01$).
+    \item \textbf{Adaptive exploration is dominant:} Ablation shows it
+          contributes 10.7\% vs.\ pBest's 2.5\%, and their combination
+          is synergistic.
+    \item \textbf{Multi-map robustness:} On sparse high-altitude terrain
+          (Map~3), ICPO outperforms all algorithms (4450 vs.\ SPSO 4466).
+          On complex urban maps, SPSO and GWO remain superior.
+    \item \textbf{ICPO v2 (chaos+Levy) does not help:} Adding chaotic
+          initialization and Levy flight degrades mean performance,
+          showing that pBest + adaptive exploration is the sweet spot.
+\end{enumerate}
+
+Future work includes extending ICPO to dynamic obstacle environments,
+multi-UAV cooperative planning, and integration with deep reinforcement
+learning for perception-aware path planning.
+
+
 \bibliographystyle{plain}
 \begin{thebibliography}{99}
 
