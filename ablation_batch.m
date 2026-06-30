@@ -1,12 +1,12 @@
 %_________________________________________________________________________%
-%  Ablation Batch: ICPO vs no-pBest vs no-Adaptive                         %
+%  Ablation Batch: AGWO vs no-pBest vs no-Adaptive                         %
 %  20 runs each, isolates each improvement's contribution                  %
 %_________________________________________________________________________%
 
 clc; clear; close all;
 N_RUNS = 20; MaxIt = 200; nPop = 150;
 
-algs = {'ICPO_full', 'ICPO_noPbest', 'ICPO_noAdapt'};
+algs = {'AGWO_full', 'AGWO_noPbest', 'AGWO_noAdapt'};
 results = struct();
 for a = 1:3; alg = algs{a};
     results.(alg).bestCosts = zeros(N_RUNS, MaxIt);
@@ -158,7 +158,7 @@ end
 figure(1); clf; hold on;
 colors = {[0.8 0.2 0.2], [0.8 0.5 0.2], [0.5 0.5 0.5]};
 styles = {'-', '--', ':'};
-legends = {'ICPO (full)', 'ICPO w/o pBest', 'ICPO w/o Adaptive'};
+legends = {'AGWO (full)', 'AGWO w/o pBest', 'AGWO w/o Adaptive'};
 for a = 1:3
     mc = mean(results.(algs{a}).bestCosts, 1);
     plot(1:MaxIt, mc, styles{a}, 'LineWidth', 2, 'Color', colors{a});

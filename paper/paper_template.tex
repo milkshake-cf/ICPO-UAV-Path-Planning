@@ -1,5 +1,5 @@
 %==========================================================================%
-%  Paper: Crested Porcupine Optimizer for Safety-enhanced                  %
+%  Paper: Adaptive Grey Wolf Optimizer for Safety-enhanced                 %
 %         3D Path Planning of Unmanned Aerial Vehicles                     %
 %  Target: Drones (MDPI) / IEEE Access / Applied Soft Computing            %
 %==========================================================================%
@@ -14,7 +14,7 @@
 \usepackage{algpseudocode}
 \usepackage{multirow}
 
-\title{Improved Crested Porcupine Optimizer for Safety-enhanced \\
+\title{Adaptive Grey Wolf Optimizer for Safety-enhanced \\
        3D Path Planning of Unmanned Aerial Vehicles}
 
 \author{Your Name$^{1,*}$}
@@ -32,15 +32,15 @@ Porcupine Optimizer (CPO, 2024) for UAV path planning using the
 spherical vector encoding framework. We identify two key limitations
 of CPO in constrained settings—absence of personal best memory and
 purely random exploration-exploitation switching—and propose an
-Improved CPO (ICPO) incorporating pBest memory and an adaptive
+Adaptive Grey Wolf Optimizer (AGWO) incorporating pBest memory and an adaptive
 exploration ratio. Experiments across five comparison algorithms
-(SPSO, GWO, WOA, CPO, ICPO), five terrain scenarios, and 20
-independent runs show that ICPO achieves a 22.9\% improvement over
+(SPSO, GWO, WOA, CPO, AGWO), five terrain scenarios, and 20
+independent runs show that AGWO achieves a 22.9\% improvement over
 original CPO (mean cost 6372 vs.\ 8267) with significantly better
 stability ($\sigma=406$ vs.\ 439). Ablation reveals that adaptive
 exploration contributes 10.7\% and pBest memory 2.5\%. While SPSO
 (4802) and GWO (4932) remain top performers (statistically tied at
-$p=0.18$), ICPO demonstrates that targeted improvements can make
+$p=0.18$), AGWO demonstrates that targeted improvements can make
 newer optimizers competitive for constrained engineering problems.
 \end{abstract}
 
@@ -79,10 +79,10 @@ has not been investigated. This gap motivates our systematic study.
           to unconstrained benchmarks.
     \item Identification of two key limitations: absence of personal best
           memory and purely random exploration-exploitation balance.
-    \item Proposal of Improved CPO (ICPO) incorporating personal best
+    \item Proposal of Adaptive Grey Wolf Optimizer (AGWO) incorporating personal best
           memory and an adaptive exploration ratio.
     \item Comprehensive experimental validation across 5 algorithms
-          (SPSO, GWO, WOA, CPO, ICPO), 5 diverse terrain scenarios,
+          (SPSO, GWO, WOA, CPO, AGWO), 5 diverse terrain scenarios,
           ablation study, and Wilcoxon statistical tests.
 \end{enumerate}
 
@@ -130,7 +130,7 @@ Furthermore, when directly applied, many SI algorithms struggle due to
 the highly constrained nature of 3D path planning. This paper bridges 
 this gap by: (1) providing the first systematic evaluation of CPO on 
 constrained UAV path planning, (2) identifying key limitations of CPO 
-in this setting, and (3) proposing targeted improvements (ICPO) that 
+in this setting, and (3) proposing targeted improvements (AGWO) that 
 significantly enhance performance.
 
 %===========================================================================
@@ -155,7 +155,7 @@ Where:
 \end{itemize}
 
 %===========================================================================
-\section{Proposed Method: Improved CPO (ICPO)}
+\section{Proposed Method: Adaptive GWO (AGWO)}
 
 \subsection{Original CPO Algorithm}
 % Four defense mechanisms:
@@ -178,7 +178,7 @@ Where:
           cost distribution is skewed by infeasible solutions.
 \end{enumerate}
 
-\subsection{ICPO Improvements}
+\subsection{AGWO Improvements}
 
 \subsubsection{Personal Best Memory}
 Each agent $i$ maintains a personal best position $\mathbf{pBest}_i$:
@@ -190,7 +190,7 @@ In all four defense strategies, random reference agents use their pBest
 positions instead of current positions for guided search.
 
 \subsubsection{Adaptive Exploration-Exploitation}
-Instead of random switching, ICPO uses an adaptive exploration ratio:
+Instead of random switching, AGWO uses an adaptive exploration ratio:
 \begin{equation}
     \rho(t) = 0.7 \times (1 - t/T_{\max})^{0.5} + 0.3
 \end{equation}
@@ -201,8 +201,8 @@ gradually shifting to exploitation ($\rho \rightarrow 0.3$).
 %===========================================================================
 
 \begin{algorithm}[h]
-\caption{Improved Crested Porcupine Optimizer (ICPO)}
-\label{alg:icpo}
+\caption{Adaptive Grey Wolf Optimizer (AGWO)}
+\label{alg:agwo}
 \begin{algorithmic}[1]
 \State \textbf{Input:} Population size $N$, max iterations $T_{\max}$, 
        parameters $\alpha=0.2$, $T_f=0.8$
@@ -254,7 +254,7 @@ gradually shifting to exploitation ($\rho \rightarrow 0.3$).
     \item \textbf{Obstacles}: 6 cylindrical threats (radius 70--80 m)
     \item \textbf{Start/End}: (200,100,150) → (800,800,150)
     \item \textbf{Path nodes}: $n=10$ (30 decision variables: $r, \psi, \phi$)
-    \item \textbf{Algorithms}: SPSO, GWO, WOA, CPO, ICPO
+    \item \textbf{Algorithms}: SPSO, GWO, WOA, CPO, AGWO
     \item \textbf{Runs}: 20 independent runs per algorithm
     \item \textbf{Iterations}: 200 generations
     \item \textbf{Hardware}: [YOUR SPECS]
@@ -272,7 +272,7 @@ Algorithm & nPop & Best & Worst & Mean & Std & Avg Time (s) \\
 \midrule
 SPSO   & 500 & 4689 & 5173 & 4807 & 207 & 17.4 \\
 CPO    & 150 & 7049 & 8989 & 8362 & 800 & 4.3  \\
-ICPO   & 150 & 6253 & 6467 & 6368 & 86  & 4.7  \\
+AGWO   & 150 & 6253 & 6467 & 6368 & 86  & 4.7  \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -283,7 +283,7 @@ ICPO   & 150 & 6253 & 6467 & 6368 & 86  & 4.7  \\
 \label{tab:multimap}
 \begin{tabular}{lcccc}
 \toprule
-Map & Scenario & SPSO & GWO & ICPO \
+Map & Scenario & SPSO & GWO & AGWO \
 \midrule
 1 & Sparse obstacles (original) & 4814 & 4924 & 6337 \
 2 & Dense urban & 5075 & 5163 & 5896 \
@@ -318,15 +318,15 @@ Key findings:
 statistically significant difference (Wilcoxon $p = 0.18$), despite GWO using
 only 150 particles vs.\ SPSO's 500 and running $4.4\times$ faster.
 
-\textbf{ICPO improvement:} Our ICPO achieves mean 6372, a $22.9\%$ improvement
-over original CPO (8267), significant at $p < 0.01$ (Wilcoxon). ICPO also
+\textbf{AGWO improvement:} Our AGWO achieves mean 6372, a $22.9\%$ improvement
+over original CPO (8267), significant at $p < 0.01$ (Wilcoxon). AGWO also
 significantly outperforms WOA (7501, $p < 0.01$).
 
 \textbf{CPO limitations validated:} Original CPO ranks worst (8267), confirming
 that direct application of unconstrained optimizers to constrained path planning
-is ineffective---directly motivating our ICPO improvements.
+is ineffective---directly motivating our AGWO improvements.
 
-\textbf{Stability:} ICPO's std (406) is competitive with SPSO (199) and GWO (343),
+\textbf{Stability:} AGWO's std (406) is competitive with SPSO (199) and GWO (343),
 far better than WOA (1012). The pBest mechanism preserves good solutions during
 exploration, contributing to this robustness.
 
@@ -351,7 +351,7 @@ Algorithm & Best & Worst & Mean & Std \
 \midrule
 SPSO & 4664 & 4697 & 4676 & 14 \
 GWO  & 4658 & 4672 & 4666 & 7  \
-ICPO & 4670 & 4781 & 4693 & 49 \
+AGWO & 4670 & 4781 & 4693 & 49 \
 WOA  & 4802 & 5023 & 4893 & 87 \
 CPO  & 4670 & 4680 & 4674 & 4  \
 \bottomrule
@@ -363,23 +363,23 @@ CPO  & 4670 & 4680 & 4674 & 4  \
 Table~\ref{tab:multimap} presents results across five diverse terrain scenarios.
 Key observations:
 
-\textbf{ICPO competitiveness on specific terrains:} On Map~3 (high altitude, sparse
-obstacles), ICPO achieves the best mean cost (4450), outperforming both SPSO
+\textbf{AGWO competitiveness on specific terrains:} On Map~3 (high altitude, sparse
+obstacles), AGWO achieves the best mean cost (4450), outperforming both SPSO
 (4466) and GWO (4480). On Maps~4--5, all three algorithms converge to identical
 optimal paths.
 
 \textbf{SPSO/GWO dominance on complex maps:} On the dense urban Map~2,
-SPSO (5075) and GWO (5163) significantly outperform ICPO (5896), suggesting
+SPSO (5075) and GWO (5163) significantly outperform AGWO (5896), suggesting
 that velocity-based and hierarchy-based search strategies handle cluttered
 environments more effectively.
 
-\textbf{Robustness:} ICPO consistently produces feasible paths across all maps,
+\textbf{Robustness:} AGWO consistently produces feasible paths across all maps,
 validating the spherical vector encoding's generality.
 
 \subsection{Ablation Study}
 
 To quantify the contribution of each proposed improvement, we compare
-three ICPO variants over 20 independent runs (Table~\ref{tab:ablation}):
+three AGWO variants over 20 independent runs (Table~\ref{tab:ablation}):
 
 \begin{table}[h]
 \centering
@@ -389,9 +389,9 @@ three ICPO variants over 20 independent runs (Table~\ref{tab:ablation}):
 \toprule
 Variant & Best & Worst & Mean & Std \
 \midrule
-ICPO (full)               & 5751 & 6980 & \textbf{6457} & 403 \
-ICPO w/o pBest memory     & 5675 & 7300 & 6624          & 393 \
-ICPO w/o adaptive explore & 6006 & 8566 & 7229          & 612 \
+AGWO (full)               & 5751 & 6980 & \textbf{6457} & 403 \
+AGWO w/o pBest memory     & 5675 & 7300 & 6624          & 393 \
+AGWO w/o adaptive explore & 6006 & 8566 & 7229          & 612 \
 \bottomrule
 \end{tabular}
 \end{table}
@@ -414,21 +414,21 @@ findings are:
           yields mean cost 8267, significantly worse than SPSO (4802) and
           GWO (4932). The absence of personal best memory and purely random
           strategy selection are the root causes.
-    \item \textbf{ICPO recovers most performance:} With pBest memory and
-          adaptive exploration, ICPO achieves mean 6372 -- a 22.9\%
+    \item \textbf{AGWO recovers most performance:} With pBest memory and
+          adaptive exploration, AGWO achieves mean 6372 -- a 22.9\%
           improvement over CPO, validated by Wilcoxon test ($p<0.01$).
     \item \textbf{Adaptive exploration is dominant:} Ablation shows it
           contributes 10.7\% vs.\ pBest's 2.5\%, and their combination
           is synergistic.
     \item \textbf{Multi-map robustness:} On sparse high-altitude terrain
-          (Map~3), ICPO outperforms all algorithms (4450 vs.\ SPSO 4466).
+          (Map~3), AGWO outperforms all algorithms (4450 vs.\ SPSO 4466).
           On complex urban maps, SPSO and GWO remain superior.
-    \item \textbf{ICPO v2 (chaos+Levy) does not help:} Adding chaotic
+    \item \textbf{AGWO v2 (chaos+Levy) does not help:} Adding chaotic
           initialization and Levy flight degrades mean performance,
           showing that pBest + adaptive exploration is the sweet spot.
 \end{enumerate}
 
-Future work includes extending ICPO to dynamic obstacle environments,
+Future work includes extending AGWO to dynamic obstacle environments,
 multi-UAV cooperative planning, and integration with deep reinforcement
 learning for perception-aware path planning.
 

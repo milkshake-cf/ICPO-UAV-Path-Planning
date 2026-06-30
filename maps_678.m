@@ -7,7 +7,7 @@ for m=6:8
     VarMax.r=2*norm(model.start-model.end)/nVar; VarMin.r=0; AngleRange=pi/4; VarMin.psi=-AngleRange; VarMax.psi=AngleRange;
     dirVector=model.end-model.start; phi0=atan2(dirVector(2),dirVector(1)); VarMin.phi=phi0-AngleRange; VarMax.phi=phi0+AngleRange;
     
-    for alg={'SPSO','GWO','ICPO'}
+    for alg={'SPSO','GWO','AGWO'}
         a=alg{1}; tic;
         for r=1:N_RUNS
             fc=inf; retry=0;
@@ -50,7 +50,7 @@ for m=6:8
                             pack(i).Cost=CostFunction(SphericalToCart(pack(i).Position,model));
                             if pack(i).Cost<A.Cost; D=B; B=A; A.Position=pack(i).Position; A.Cost=pack(i).Cost; elseif pack(i).Cost<B.Cost; D=B; B.Position=pack(i).Position; B.Cost=pack(i).Cost; elseif pack(i).Cost<D.Cost; D.Position=pack(i).Position; D.Cost=pack(i).Cost; end
                         end; end; fc=A.Cost;
-                    case 'ICPO'
+                    case 'AGWO'
                         nPop=150; alpha=0.2; Tf=0.8; ea.Position=[]; ea.Cost=[]; ea.pBest.Position=[]; ea.pBest.Cost=[]; GB.Cost=inf; pop=repmat(ea,nPop,1); prev=cell(nPop,1); isInit=false;
                         while ~isInit; for i=1:nPop; pop(i).Position=CreateRandomSolution(VarSize,VarMin,VarMax); pop(i).Cost=CostFunction(SphericalToCart(pop(i).Position,model)); pop(i).pBest.Position=pop(i).Position; pop(i).pBest.Cost=pop(i).Cost; prev{i}=pop(i).Position;
                             if pop(i).Cost<GB.Cost; GB.Position=pop(i).Position; GB.Cost=pop(i).Cost; isInit=true; end; end; end

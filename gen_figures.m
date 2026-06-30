@@ -24,7 +24,7 @@ CostFunction = @(x) MyCost(x, model);
 
 fprintf('Running all algorithms to collect best paths...\n');
 
-algs = {'SPSO', 'GWO', 'ICPO', 'WOA', 'CPO'};
+algs = {'SPSO', 'GWO', 'AGWO', 'WOA', 'CPO'};
 colors = {[0 0.45 0.74], [0.85 0.33 0.10], [0.93 0.69 0.13], [0.49 0.18 0.56], [0.64 0.08 0.18]};
 best_paths = cell(1,5);
 best_costs = zeros(1,5);
@@ -42,8 +42,8 @@ for alg_idx = 1:5
                 [cost, sol, conv] = run_single_spso(model, 500, 200);
             case 'GWO'
                 [cost, sol, conv] = run_single_gwo(model, 150, 200);
-            case 'ICPO'
-                [cost, sol, conv] = run_single_icpo(model, 150, 200);
+            case 'AGWO'
+                [cost, sol, conv] = run_single_agwo(model, 150, 200);
             case 'WOA'
                 [cost, sol, conv] = run_single_woa(model, 150, 200);
             case 'CPO'
@@ -68,25 +68,25 @@ fig_ga = figure('Position', [50 50 1400 500], 'Color', 'white');
 subplot(1,3,1);
 draw_path(best_paths{5}, model, 'Original CPO', colors{5}, best_costs(5));
 
-% Center panel: ICPO path
+% Center panel: AGWO path
 subplot(1,3,2);
-draw_path(best_paths{3}, model, 'Improved CPO (Ours)', colors{3}, best_costs(3));
+draw_path(best_paths{3}, model, 'AGWO (Ours)', colors{3}, best_costs(3));
 
 % Right panel: SPSO path
 subplot(1,3,3);
 draw_path(best_paths{1}, model, 'SPSO (Baseline)', colors{1}, best_costs(1));
 
-sgtitle('UAV Path Planning: CPO → ICPO → SPSO Comparison', 'FontSize', 14, 'FontWeight', 'bold');
+sgtitle('UAV Path Planning: CPO → AGWO → SPSO Comparison', 'FontSize', 14, 'FontWeight', 'bold');
 mkdir('figures');
 saveas(fig_ga, 'figures/graphical_abstract.png');
 fprintf('Saved: figures/graphical_abstract.png\n');
 
-%% Figure 2: Single best path (ICPO) with detailed labels
+%% Figure 2: Single best path (AGWO) with detailed labels
 fig_detail = figure('Position', [100 100 800 600], 'Color', 'white');
 draw_path_detailed(best_paths{3}, model, ...
-    sprintf('ICPO Optimal Path (Cost = %.1f)', best_costs(3)), colors{3});
-saveas(fig_detail, 'figures/icpo_best_path.png');
-fprintf('Saved: figures/icpo_best_path.png\n');
+    sprintf('AGWO Optimal Path (Cost = %.1f)', best_costs(3)), colors{3});
+saveas(fig_detail, 'figures/agwo_best_path.png');
+fprintf('Saved: figures/agwo_best_path.png\n');
 
 %% Figure 3: All algorithms convergence (best run each)
 fig_conv = figure('Position', [100 100 800 500], 'Color', 'white');
@@ -399,7 +399,7 @@ function [best_cost, best_sol, conv] = run_single_gwo(model, nPop, MaxIt)
     best_cost=Alpha.Cost; best_sol=Alpha.Position;
 end
 
-function [best_cost, best_sol, conv] = run_single_icpo(model, nPop, MaxIt)
+function [best_cost, best_sol, conv] = run_single_agwo(model, nPop, MaxIt)
     nVar = model.n; VarSize = [1 nVar];
     VarMin.x = model.xmin; VarMax.x = model.xmax;
     VarMin.y = model.ymin; VarMax.y = model.ymax;

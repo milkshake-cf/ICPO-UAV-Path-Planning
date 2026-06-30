@@ -1,5 +1,5 @@
 %_________________________________________________________________________%
-%  Batch Comparison: SPSO vs CPO vs ICPO for UAV Path Planning            %
+%  Batch Comparison: SPSO vs CPO vs AGWO for UAV Path Planning            %
 %  Runs each algorithm for N_RUNS independent times, saves statistics     %
 %_________________________________________________________________________%
 
@@ -19,9 +19,9 @@ results.CPO.bestCosts = zeros(N_RUNS, MaxIt);
 results.CPO.finalCosts = zeros(1, N_RUNS);
 results.CPO.times = zeros(1, N_RUNS);
 
-results.ICPO.bestCosts = zeros(N_RUNS, MaxIt);
-results.ICPO.finalCosts = zeros(1, N_RUNS);
-results.ICPO.times = zeros(1, N_RUNS);
+results.AGWO.bestCosts = zeros(N_RUNS, MaxIt);
+results.AGWO.finalCosts = zeros(1, N_RUNS);
+results.AGWO.times = zeros(1, N_RUNS);
 
 %% Run SPSO
 disp('========== Running SPSO ==========');
@@ -200,11 +200,11 @@ for run = 1:N_RUNS
     fprintf('CPO  Run %d/%d: Best=%8.2f, Time=%.1fs\n', run, N_RUNS, GlobalBest.Cost, results.CPO.times(run));
 end
 
-%% Run ICPO
-disp('========== Running ICPO ==========');
+%% Run AGWO
+disp('========== Running AGWO ==========');
 for run = 1:N_RUNS
     tic;
-    % ---- ICPO Core (simplified inline) ----
+    % ---- AGWO Core (simplified inline) ----
     model = CreateModel();
     CostFunction=@(x) MyCost(x,model);
     nVar=model.n; VarSize=[1 nVar];
@@ -234,9 +234,9 @@ for run = 1:N_RUNS
             if pop(i).Cost<GlobalBest.Cost; GlobalBest.Position=pop(i).Position; GlobalBest.Cost=pop(i).Cost; isInit=true; end
         end
     end
-    BestCostICPO=zeros(MaxIt,1);
+    BestCostAGWO=zeros(MaxIt,1);
     for t=1:MaxIt
-        BestCostICPO(t)=GlobalBest.Cost;
+        BestCostAGWO(t)=GlobalBest.Cost;
         explRatio=0.7*(1-t/MaxIt)^0.5+0.3;
         for i=1:nPop
             U1=rand(VarSize)>rand();
@@ -290,17 +290,17 @@ for run = 1:N_RUNS
             end
         end
     end
-    results.ICPO.bestCosts(run,:) = BestCostICPO;
-    results.ICPO.finalCosts(run) = GlobalBest.Cost;
-    results.ICPO.times(run) = toc;
-    fprintf('ICPO Run %d/%d: Best=%8.2f, Time=%.1fs\n', run, N_RUNS, GlobalBest.Cost, results.ICPO.times(run));
+    results.AGWO.bestCosts(run,:) = BestCostAGWO;
+    results.AGWO.finalCosts(run) = GlobalBest.Cost;
+    results.AGWO.times(run) = toc;
+    fprintf('AGWO Run %d/%d: Best=%8.2f, Time=%.1fs\n', run, N_RUNS, GlobalBest.Cost, results.AGWO.times(run));
 end
 
 %% Compute Statistics & Display
 fprintf('\n========== FINAL STATISTICS (N_RUNS=%d, MaxIt=%d) ==========\n', N_RUNS, MaxIt);
 fprintf('%-10s %12s %12s %12s %12s %12s\n', 'Algorithm', 'Best', 'Worst', 'Mean', 'Std', 'Avg Time(s)');
 
-algs = {'SPSO', 'CPO', 'ICPO'};
+algs = {'SPSO', 'CPO', 'AGWO'};
 stat_table = zeros(3, 5);
 for a = 1:3
     alg = algs{a};
@@ -318,7 +318,7 @@ for a = 1:3
     meanCurve = mean(results.(alg).bestCosts, 1);
     plot(1:MaxIt, meanCurve, styles{a}, 'LineWidth', 2, 'Color', colors{a});
 end
-legend('SPSO', 'CPO', 'ICPO', 'Location', 'northeast');
+legend('SPSO', 'CPO', 'AGWO', 'Location', 'northeast');
 xlabel('Iteration'); ylabel('Mean Best Cost');
 title(sprintf('Convergence Comparison (%d runs)', N_RUNS));
 grid on; hold off;
@@ -326,7 +326,7 @@ saveas(gcf, 'figures/convergence_comparison.png');
 
 %% Boxplot
 figure(2); clf;
-boxplot([results.SPSO.finalCosts; results.CPO.finalCosts; results.ICPO.finalCosts]', algs);
+boxplot([results.SPSO.finalCosts; results.CPO.finalCosts; results.AGWO.finalCosts]', algs);
 ylabel('Final Best Cost');
 title(sprintf('Distribution of Final Costs (%d runs)', N_RUNS));
 grid on;

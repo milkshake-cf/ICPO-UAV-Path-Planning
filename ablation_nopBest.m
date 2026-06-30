@@ -1,6 +1,6 @@
 %_________________________________________________________________________________%
-%  ABLATION: ICPO without pBest memory                                           %
-%  Same as ICPO but uses current position instead of pBest in all strategies     %
+%  ABLATION: AGWO without pBest memory                                           %
+%  Same as AGWO but uses current position instead of pBest in all strategies     %
 %  This isolates the contribution of the pBest mechanism                         %
 %_________________________________________________________________________________%
 
@@ -38,7 +38,7 @@ BestCost=zeros(MaxIt,1);
 
 for t=1:MaxIt
     BestCost(t)=GlobalBest.Cost;
-    explRatio=0.7*(1-t/MaxIt)^0.5+0.3;  % Adaptive (same as ICPO)
+    explRatio=0.7*(1-t/MaxIt)^0.5+0.3;  % Adaptive (same as AGWO)
     
     for i=1:nPop
         U1=rand(VarSize)>rand();
@@ -97,10 +97,10 @@ for t=1:MaxIt
     end
 end
 
-disp('=== ICPO-no-pBest COMPLETE ===');
+disp('=== AGWO-no-pBest COMPLETE ===');
 disp(['Final Best Cost = ' num2str(GlobalBest.Cost)]);
 BestPosition=SphericalToCart(GlobalBest.Position,model);
-PlotSolution(BestPosition,model,0.95); title('ICPO without pBest');
+PlotSolution(BestPosition,model,0.95); title('AGWO without pBest');
 figure(2); plot(BestCost,'LineWidth',2); xlabel('Iteration'); ylabel('Best Cost');
-title('ICPO without pBest - Convergence'); grid on;
-save('results/ICPO_nopBest_results.mat','BestCost','GlobalBest','BestPosition');
+title('AGWO without pBest - Convergence'); grid on;
+save('results/AGWO_nopBest_results.mat','BestCost','GlobalBest','BestPosition');

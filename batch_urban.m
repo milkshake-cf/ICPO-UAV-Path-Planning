@@ -4,7 +4,7 @@
 %_________________________________________________________________________%
 clc; clear; close all;
 N_RUNS = 5; MaxIt = 200;
-algs = {'SPSO','GWO','ICPO','WOA','CPO'};
+algs = {'SPSO','GWO','AGWO','WOA','CPO'};
 results = struct();
 for a = 1:5; alg=algs{a};
     results.(alg).bestCosts=zeros(N_RUNS,MaxIt);
@@ -103,7 +103,7 @@ for a = 1:5
                         elseif pack(i).Cost<D.Cost; D.Position=pack(i).Position; D.Cost=pack(i).Cost; end
                     end
                 end; GB.Cost=A.Cost;
-            case 'ICPO'
+            case 'AGWO'
                 nP=150; al=0.2; Tf=0.8;
                 ea.Position=[]; ea.Cost=[]; ea.pBest.Position=[]; ea.pBest.Cost=[];
                 GB.Cost=inf; pop=repmat(ea,nP,1); pv=cell(nP,1); ok=false;

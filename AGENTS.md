@@ -1,6 +1,6 @@
-# SPSO-CPO-ICPO: UAV 3D Path Planning with Swarm Intelligence
+# SPSO-CPO-AGWO: UAV 3D Path Planning with Swarm Intelligence
 
-MATLAB project extending the SPSO framework (Phung & Ha, 2021) with CPO (Abdel-Basset, 2024) and a custom ICPO variant. Research code for a first-year MS paper.
+MATLAB project extending the SPSO framework (Phung & Ha, 2021) with CPO (Abdel-Basset, 2024) and a custom AGWO variant. Research code for a first-year MS paper.
 
 ## Project
 
@@ -15,7 +15,7 @@ MATLAB project extending the SPSO framework (Phung & Ha, 2021) with CPO (Abdel-B
 # Run a single algorithm (from project root)
 /d/MATLAB/R2024b/bin/matlab -batch "SPSO_MAIN" -nodisplay -nosplash
 /d/MATLAB/R2024b/bin/matlab -batch "CPO_MAIN_v2" -nodisplay -nosplash
-/d/MATLAB/R2024b/bin/matlab -batch "ICPO_MAIN" -nodisplay -nosplash
+/d/MATLAB/R2024b/bin/matlab -batch "AGWO_MAIN" -nodisplay -nosplash
 
 # Run batch comparison (N_RUNS × 3 algorithms, ~3 min for 5 runs)
 /d/MATLAB/R2024b/bin/matlab -batch "batch_compare" -nodisplay -nosplash
@@ -28,7 +28,7 @@ Adjust `N_RUNS` in `batch_compare.m` (line 10) and `MaxIt` per algorithm before 
 ```
 SPSO_MAIN.m          — SPSO entry: PSO with spherical vector encoding (nPop=500, MaxIt=200)
 CPO_MAIN_v2.m        — Corrected CPO port (nPop=150): 4 defense strategies, clip bounds
-ICPO_MAIN.m          — Improved CPO (nPop=150): adds pBest memory + adaptive exploration ratio
+AGWO_MAIN.m          — Adaptive GWO (nPop=150): adds pBest memory + adaptive exploration ratio
 batch_compare.m      — Runs all 3 algorithms N_RUNS times, outputs stats + plots
 
 CreateModel.m        — Loads terrain .tif, defines 6 cylindrical threats, start/end points
@@ -53,7 +53,7 @@ paper_template.tex   — LaTeX paper draft with actual experiment data filled in
 
 ## Notes
 
-- CPO original MATLAB source is at `CPO_original/CPO/CPO.m` (from Abdel-Basset's MATLAB Drive). The Python-corrected `U2` fix is applied in CPO_MAIN_v2.m and ICPO_MAIN.m.
+- CPO original MATLAB source is at `CPO_original/CPO/CPO.m` (from Abdel-Basset's MATLAB Drive). The Python-corrected `U2` fix is applied in CPO_MAIN_v2.m and AGWO_MAIN.m.
 - `CPO_MAIN.m` is the user's earlier buggy attempt; use `CPO_MAIN_v2.m` instead.
-- ICPO key innovations: `pBest` memory field on each agent, `explRatio = 0.7*(1-t/MaxIt)^0.5 + 0.3`, pBest-referenced position updates in all 4 defense strategies.
+- AGWO key innovations: `pBest` memory field on each agent, `explRatio = 0.7*(1-t/MaxIt)^0.5 + 0.3`, pBest-referenced position updates in all 4 defense strategies.
 - Target journal: Drones (MDPI), IEEE Access, or Applied Soft Computing.

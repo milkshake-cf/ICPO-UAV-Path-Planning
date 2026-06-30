@@ -1,0 +1,154 @@
+%_________________________________________________________________________________%
+%  AGWO v2: Adaptive GWO with Chaos + Levy Flight                                 %
+%  Additional improvements over AGWO v1:                                           %
+%  1. Chaotic initialization (Logistic map) replaces uniform random                %
+%  2. Levy flight perturbation for escaping local optima                            %
+%_________________________________________________________________________________%
+
+clc; clear; close all;
+
+model = CreateModel();
+CostFunction=@(x) MyCost(x,model);
+nVar=model.n; VarSize=[1 nVar];
+VarMin.x=model.xmin; VarMax.x=model.xmax;
+VarMin.y=model.ymin; VarMax.y=model.ymax;
+VarMin.z=model.zmin; VarMax.z=model.zmax;
+VarMax.r=2*norm(model.start-model.end)/nVar; VarMin.r=0;
+AngleRange=pi/4; VarMin.psi=-AngleRange; VarMax.psi=AngleRange;
+dirVector=model.end-model.start; phi0=atan2(dirVector(2),dirVector(1));
+VarMin.phi=phi0-AngleRange; VarMax.phi=phi0+AngleRange;
+
+MaxIt=200; nPop=150; alpha=0.2; Tf=0.8;
+
+%% Initialization with Logistic Chaos Map
+disp('Initializing AGWO v2 (Chaos + Levy)...');
+
+empty_agent.Position=[]; empty_agent.Cost=[]; empty_agent.pBest.Position=[]; empty_agent.pBest.Cost=[];
+GlobalBest.Cost=inf;
+pop=repmat(empty_agent,nPop,1);
+prev_pos=cell(nPop,1);
+
+% Logistic map parameters
+ch = rand();  % Initial chaotic seed
+
+isInit=false;
+while ~isInit
+    for i=1:nPop
+        % Chaotic initialization for r
+        for d=1:nVar
+            ch = 4*ch*(1-ch);  % Logistic map
+            pop(i).Position.r(d) = VarMin.r + ch*(VarMax.r - VarMin.r);
+        end
+        % Chaotic initialization for psi
+        for d=1:nVar
+            ch = 4*ch*(1-ch);
+            pop(i).Position.psi(d) = VarMin.psi + ch*(VarMax.psi - VarMin.psi);
+        end
+        % Chaotic initialization for phi
+        for d=1:nVar
+            ch = 4*ch*(1-ch);
+            pop(i).Position.phi(d) = VarMin.phi + ch*(VarMax.phi - VarMin.phi);
+        end
+        
+        cp=SphericalToCart(pop(i).Position,model);
+        if any(isnan(cp.x))||any(isnan(cp.y))||any(isnan(cp.z)); pop(i).Cost=inf;
+        else; try; pop(i).Cost=CostFunction(cp); catch; pop(i).Cost=inf; end; end
+        pop(i).pBest.Position=pop(i).Position; pop(i).pBest.Cost=pop(i).Cost;
+        prev_pos{i}=pop(i).Position;
+        if pop(i).Cost<GlobalBest.Cost; GlobalBest.Position=pop(i).Position; GlobalBest.Cost=pop(i).Cost; isInit=true; end
+    end
+end
+
+BestCost=zeros(MaxIt,1);
+
+%% AGWO v2 Main Loop
+disp('Starting AGWO v2 optimization...');
+
+for t=1:MaxIt
+    BestCost(t)=GlobalBest.Cost;
+    explRatio=0.7*(1-t/MaxIt)^0.5+0.3;
+    
+    % Levy step size (decreases over time)
+    levy_scale = 0.01 * (1 - t/MaxIt)^0.5;
+    
+    for i=1:nPop
+        U1=rand(VarSize)>rand();
+        
+        if rand()<explRatio  % EXPLORATION
+            if rand()<rand()  % Strategy 1: Visual
+                k=randi(nPop); m=randi(nPop);
+                gr=(pop(k).pBest.Position.r+pop(m).pBest.Position.r)/2;
+                pop(i).Position.r=pop(i).Position.r+randn(VarSize).*abs(2*rand()*GlobalBest.Position.r-gr);
+                gpsi=(pop(k).pBest.Position.psi+pop(m).pBest.Position.psi)/2;
+                pop(i).Position.psi=pop(i).Position.psi+randn(VarSize).*abs(2*rand()*GlobalBest.Position.psi-gpsi);
+                gphi=(pop(k).pBest.Position.phi+pop(m).pBest.Position.phi)/2;
+                pop(i).Position.phi=pop(i).Position.phi+randn(VarSize).*abs(2*rand()*GlobalBest.Position.phi-gphi);
+            else  % Strategy 2: Sound
+                k=randi(nPop); m=randi(nPop);
+                yr=(pop(i).Position.r+pop(k).pBest.Position.r)/2; dr=pop(m).pBest.Position.r-pop(k).pBest.Position.r;
+                pop(i).Position.r=U1.*pop(i).Position.r+(1-U1).*(yr+rand()*dr);
+                ypsi=(pop(i).Position.psi+pop(k).pBest.Position.psi)/2; dpsi=pop(m).pBest.Position.psi-pop(k).pBest.Position.psi;
+                pop(i).Position.psi=U1.*pop(i).Position.psi+(1-U1).*(ypsi+rand()*dpsi);
+                yphi=(pop(i).Position.phi+pop(k).pBest.Position.phi)/2; dphi=pop(m).pBest.Position.phi-pop(k).pBest.Position.phi;
+                pop(i).Position.phi=U1.*pop(i).Position.phi+(1-U1).*(yphi+rand()*dphi);
+            end
+        else  % EXPLOITATION
+            Yt=2*rand()*(1-t/MaxIt)^(t/MaxIt); U2=(rand(VarSize)<0.5)*2-1; S=rand()*U2;
+            sc=0; for j=1:nPop; sc=sc+pop(j).pBest.Cost; end; sf=sc+eps;
+            if rand()<Tf  % Strategy 3
+                St=exp(pop(i).pBest.Cost/sf); S=S.*Yt.*St; k=randi(nPop); m=randi(nPop);
+                pop(i).Position.r=(1-U1).*pop(i).Position.r+U1.*(pop(k).pBest.Position.r+St*(pop(m).pBest.Position.r-pop(k).pBest.Position.r)-S);
+                pop(i).Position.psi=(1-U1).*pop(i).Position.psi+U1.*(pop(k).pBest.Position.psi+St*(pop(m).pBest.Position.psi-pop(k).pBest.Position.psi)-S);
+                pop(i).Position.phi=(1-U1).*pop(i).Position.phi+U1.*(pop(k).pBest.Position.phi+St*(pop(m).pBest.Position.phi-pop(k).pBest.Position.phi)-S);
+            else  % Strategy 4
+                Mt=exp(pop(i).pBest.Cost/sf); k=randi(nPop); r2_p=rand();
+                Ft_r=rand(VarSize).*(Mt*(-pop(i).Position.r+pop(k).pBest.Position.r)); S_r=S.*Yt.*Ft_r; pop(i).Position.r=GlobalBest.Position.r+(alpha*(1-r2_p)+r2_p)*(U2.*GlobalBest.Position.r-pop(i).Position.r)-S_r;
+                Ft_psi=rand(VarSize).*(Mt*(-pop(i).Position.psi+pop(k).pBest.Position.psi)); S_psi=S.*Yt.*Ft_psi; pop(i).Position.psi=GlobalBest.Position.psi+(alpha*(1-r2_p)+r2_p)*(U2.*GlobalBest.Position.psi-pop(i).Position.psi)-S_psi;
+                Ft_phi=rand(VarSize).*(Mt*(-pop(i).Position.phi+pop(k).pBest.Position.phi)); S_phi=S.*Yt.*Ft_phi; pop(i).Position.phi=GlobalBest.Position.phi+(alpha*(1-r2_p)+r2_p)*(U2.*GlobalBest.Position.phi-pop(i).Position.phi)-S_phi;
+            end
+        end
+        
+        % === Levy flight perturbation (with 20% probability) ===
+        if rand() < 0.2
+            levy_step = levy_flight(nVar) * levy_scale;
+            pop(i).Position.r = pop(i).Position.r + levy_step;
+            pop(i).Position.psi = pop(i).Position.psi + levy_step * 0.5;
+            pop(i).Position.phi = pop(i).Position.phi + levy_step * 0.5;
+        end
+        
+        % Bounds
+        pop(i).Position.r=max(pop(i).Position.r,VarMin.r); pop(i).Position.r=min(pop(i).Position.r,VarMax.r);
+        pop(i).Position.psi=max(pop(i).Position.psi,VarMin.psi); pop(i).Position.psi=min(pop(i).Position.psi,VarMax.psi);
+        pop(i).Position.phi=max(pop(i).Position.phi,VarMin.phi); pop(i).Position.phi=min(pop(i).Position.phi,VarMax.phi);
+        
+        cp=SphericalToCart(pop(i).Position,model);
+        if any(isnan(cp.x))||any(isnan(cp.y))||any(isnan(cp.z)); nc=inf;
+        else; try; nc=CostFunction(cp); catch; nc=inf; end; end
+        if pop(i).Cost<nc; pop(i).Position=prev_pos{i};
+        else; prev_pos{i}=pop(i).Position; pop(i).Cost=nc;
+            if nc<pop(i).pBest.Cost; pop(i).pBest.Position=pop(i).Position; pop(i).pBest.Cost=nc; end
+            if nc<GlobalBest.Cost; GlobalBest.Position=pop(i).Position; GlobalBest.Cost=nc; end
+        end
+    end
+    
+    if mod(t,10)==0||t==1
+        disp(['Iter ' num2str(t) ': Best=' num2str(BestCost(t),'%.1f')]);
+    end
+end
+
+disp('=== AGWO v2 COMPLETE ===');
+disp(['Final Best Cost = ' num2str(GlobalBest.Cost)]);
+BestPosition=SphericalToCart(GlobalBest.Position,model);
+PlotSolution(BestPosition,model,0.95); title('AGWO v2: Chaos + Levy');
+figure(2); plot(BestCost,'LineWidth',2); xlabel('Iteration'); ylabel('Best Cost');
+title('AGWO v2 Convergence'); grid on;
+save('results/AGWOv2_results.mat','BestCost','GlobalBest','BestPosition');
+
+%% Levy flight generator
+function L = levy_flight(dim)
+    beta = 1.5;
+    sigma = (gamma(1+beta)*sin(pi*beta/2)/(gamma((1+beta)/2)*beta*2^((beta-1)/2)))^(1/beta);
+    u = randn(1,dim)*sigma;
+    v = randn(1,dim);
+    L = u ./ (abs(v).^(1/beta));
+end

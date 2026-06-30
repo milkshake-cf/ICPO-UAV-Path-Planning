@@ -12,7 +12,7 @@ N_POP  = 150;         % Population for all algorithms
 SPSO_POP = 500;        % SPSO uses more particles
 
 MAP_NAMES = {'Mountain', 'Urban', 'Coastal'};
-ALG_NAMES = {'SPSO', 'GWO', 'ICPO', 'WOA', 'CPO'};
+ALG_NAMES = {'SPSO', 'GWO', 'AGWO', 'WOA', 'CPO'};
 
 % Preallocate results: algs × maps × runs
 all_results = struct();
@@ -62,8 +62,8 @@ for map_id = 1:3
                 case 'GWO'
                     [best_cost, ~, conv] = RunGWO(model, N_POP, MAX_IT, ...
                         VarSize, VarMin, VarMax, CostFunction);
-                case 'ICPO'
-                    [best_cost, ~, conv] = RunICPO(model, N_POP, MAX_IT, ...
+                case 'AGWO'
+                    [best_cost, ~, conv] = RunAGWO(model, N_POP, MAX_IT, ...
                         VarSize, VarMin, VarMax, CostFunction);
                 case 'WOA'
                     [best_cost, ~, conv] = RunWOA(model, N_POP, MAX_IT, ...
@@ -402,7 +402,7 @@ function [best_cost, best_sol, conv] = RunGWO(model, nPop, MaxIt, ...
     best_cost = Alpha.Cost; best_sol = Alpha.Position;
 end
 
-function [best_cost, best_sol, conv] = RunICPO(model, nPop, MaxIt, ...
+function [best_cost, best_sol, conv] = RunAGWO(model, nPop, MaxIt, ...
         VarSize, VarMin, VarMax, CostFunction)
     CostFunction_wrap = @(x) safeCost(x, CostFunction);
 

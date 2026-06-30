@@ -1,6 +1,6 @@
 % Multi-map batch: 5 algorithms × 3 maps × 10 runs
 maps = {'mountain','urban','coastal'};
-algs = {'SPSO','GWO','ICPO','WOA','CPO'};
+algs = {'SPSO','GWO','AGWO','WOA','CPO'};
 N_RUNS = 10;
 MAX_IT = 200;
 
@@ -26,7 +26,7 @@ for mi = 1:3
             switch algs{ai}
                 case 'SPSO', cost = runSPSO_mm(model,500,MAX_IT);
                 case 'GWO',  cost = runGWO_mm(model,150,MAX_IT);
-                case 'ICPO', cost = runICPO_mm(model,150,MAX_IT);
+                case 'AGWO', cost = runAGWO_mm(model,150,MAX_IT);
                 case 'WOA',  cost = runWOA_mm(model,150,MAX_IT);
                 case 'CPO',  cost = runCPO_mm(model,150,MAX_IT);
             end

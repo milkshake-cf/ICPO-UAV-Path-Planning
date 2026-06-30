@@ -1,11 +1,11 @@
 %_________________________________________________________________________%
-%  Multi-Map Benchmark: SPSO vs GWO vs ICPO across 8 scenarios            %
+%  Multi-Map Benchmark: SPSO vs GWO vs AGWO across 8 scenarios            %
 %  10 runs each, saves all results                                        %
 %_________________________________________________________________________%
 
 clc; clear; close all;
 N_RUNS = 10; MaxIt = 200; N_MAPS = 8;
-algs = {'SPSO', 'GWO', 'ICPO'};
+algs = {'SPSO', 'GWO', 'AGWO'};
 fprintf('Multi-Map: %d algs x %d maps x %d runs = %d total experiments\n', 3, N_MAPS, N_RUNS, 3*N_MAPS*N_RUNS);
 
 allResults = struct();
@@ -42,7 +42,7 @@ for m = 1:N_MAPS
                 switch a
                     case 1, fc = run_SPSO_core(model, CostFunction, nVar, VarSize, VarMin, VarMax, MaxIt);
                     case 2, fc = run_GWO_core(model, CostFunction, nVar, VarSize, VarMin, VarMax, MaxIt);
-                    case 3, fc = run_ICPO_core(model, CostFunction, nVar, VarSize, VarMin, VarMax, MaxIt);
+                    case 3, fc = run_AGWO_core(model, CostFunction, nVar, VarSize, VarMin, VarMax, MaxIt);
                 end
                 retry = retry + 1;
             end
@@ -164,8 +164,8 @@ function [X1,X2,X3]=GWOh(Ap,Bp,Dp,X,a,vs)
     A3=2*a*rand(vs)-a; C3=2*rand(vs); X3=Dp-A3.*abs(C3.*Dp-X);
 end
 
-%% Helper: ICPO core
-function fc = run_ICPO_core(model, CostFunction, nVar, VarSize, VarMin, VarMax, MaxIt)
+%% Helper: AGWO core
+function fc = run_AGWO_core(model, CostFunction, nVar, VarSize, VarMin, VarMax, MaxIt)
     nPop=150; alpha=0.2; Tf=0.8;
     empty_a.Position=[]; empty_a.Cost=[]; empty_a.pBest.Position=[]; empty_a.pBest.Cost=[];
     GlobalBest.Cost=inf;

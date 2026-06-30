@@ -31,7 +31,7 @@ VarMin.phi=phi0 - AngleRange; VarMax.phi=phi0 + AngleRange;
 %% GWO Parameters
 
 MaxIt=200;          % Maximum Number of Iterations
-nPop=150;           % Population Size (same as ICPO for fair comparison)
+nPop=150;           % Population Size (same as AGWO for fair comparison)
 
 %% Initialization
 
